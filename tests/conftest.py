@@ -34,11 +34,12 @@ def browser_settings(request):
                 "enableVideo": True
             }
         }
-#Для того, чтобы не передавать лог/пас в ссылке
+        #Для того, чтобы не передавать лог/пас в ссылке
         options.capabilities.update(selenoid_capabilities)
+
         selenoid_host = os.getenv("SELENOID_HOST")
-        login = os.getenv('LOGIN')
-        password = os.getenv('PASSWORD')
+        login = os.getenv('SELENOID_USER')
+        password = os.getenv('SELENOID_PASSWORD')
         driver = webdriver.Remote(
             command_executor=f"https://{login}:{password}@{selenoid_host}/wd/hub",
             options=options)
