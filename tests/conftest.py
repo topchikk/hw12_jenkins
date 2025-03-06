@@ -1,28 +1,48 @@
 import allure
 import pytest
+import os
 from selene import browser
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-
 from utils import attach
+from dotenv import load_dotenv
+
+
+DEFAULT_BROWSER_NAME = "chrome"
+DEFAULT_BROWSER_VERSION = "126.0"
+
+
+def pytest_addoption(parser):
+    parser.addoption("--browser_name")
+    parser.addoption("--browser_version")
+
+
+@pytest.fixture(scope='session', autouse=True)
+def load_env():
+    load_dotenv()
 
 
 @pytest.fixture(scope='function', autouse=True)
-def browser_settings():
+def browser_settings(request):
     with allure.step("Параметры браузера"):
+        browser_name = request.config.getoption('browser_name') or DEFAULT_BROWSER_NAME
+        browser_version = request.config.getoption('browser_version') or DEFAULT_BROWSER_VERSION
         options = Options()
         selenoid_capabilities = {
-            "browserName": "chrome",
-            "browserVersion": "126.0",
+            "browserName": browser_name,
+            "browserVersion": browser_version,
             "selenoid:options": {
                 "enableVNC": True,
                 "enableVideo": True
             }
         }
-
+#Для того, чтобы не передавать лог/пас в ссылке
         options.capabilities.update(selenoid_capabilities)
+        selenoid_host = os.getenv("SELENOID_HOST")
+        login = os.getenv('LOGIN')
+        password = os.getenv('PASSWORD')
         driver = webdriver.Remote(
-            command_executor=f"https://user1:1234@selenoid.autotests.cloud/wd/hub",
+            command_executor=f"https://{login}:{password}@{selenoid_host}/wd/hub",
             options=options)
 
         browser.config.driver = driver

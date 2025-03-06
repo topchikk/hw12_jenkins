@@ -5,3 +5,5 @@ webdriver-manager
 allure-python-commons~=2.13.5
 allure-pytest
 utils~=1.0.2
+python-dotenv
+resources
