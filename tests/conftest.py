@@ -16,10 +16,8 @@ def pytest_addoption(parser):
     parser.addoption("--browser_name")
     parser.addoption("--browser_version")
 
-
-@pytest.fixture(scope='session', autouse=True)
-def load_env():
-    load_dotenv()
+#Загрузка переменных из файла .env
+load_dotenv()
 
 
 @pytest.fixture(scope='function', autouse=True)
